@@ -14,7 +14,11 @@ class HomePage extends StatelessWidget {
       body: SafeArea(
         child: ListView(
           children: [
-            SizedBox(height: 16.0,),
+            SizedBox(height: 16),
+            Container(
+              height: 414,
+              child: Image.asset('assets/home.jpeg',)
+            ),
             Padding(
               padding: const EdgeInsets.all(24.0),
               child: Text('''안녕하십니까? 테니스넷(tennisnet.co.kr)운영자 정진화입니다.
