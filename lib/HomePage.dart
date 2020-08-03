@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tennislesson/PlaylistItemPage.dart';
+import 'package:tennislesson/SavedVideoPage.dart';
 import 'package:tennislesson/youtube.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -43,9 +44,12 @@ class HomePage extends StatelessWidget {
                 launch('http://www.tennisnet.co.kr/');
               },
             ),
-//            ListTile(
-//              title: Text('저장된 영상'),
-//            ),
+            ListTile(
+              title: Text("저장한 영상"),
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => SavedVideoPage()));
+              },
+            ),
             SizedBox(height: 60.0,),
           ]
         ),
