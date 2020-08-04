@@ -4,7 +4,8 @@ import 'package:flutter/services.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:flick_video_player/flick_video_player.dart';
+import 'package:chewie/chewie.dart';
+// import 'package:flick_video_player/flick_video_player.dart';
 import 'package:video_player/video_player.dart';
 import 'package:provider/provider.dart';
 
@@ -29,7 +30,7 @@ class SavedVideoPage extends StatefulWidget {
 
 class SavedVideoState extends State<SavedVideoPage> {
 
-  FlickManager flickManager;
+  // FlickManager flickManager;
 
   Future<Set<SavedVideo>> getSavedList() async {
     var prefs = await SharedPreferences.getInstance();
@@ -118,25 +119,33 @@ class SavedVideoPlayer extends StatefulWidget {
 }
 
 class SavedVideoPlayerState extends State<SavedVideoPlayer> {
-  FlickManager flickManager;
+  // FlickManager flickManager;
+  VideoPlayerController videoPlayerController;
+  ChewieController chewieController;
+
   File videoFile;
   @override
   void initState() {
     super.initState();
-    print(widget.video.fileName);
     videoFile = File(widget.video.fileName);
+    print(videoFile.path);
     widget.video.video = videoFile;
-    videoFile.length().then((value) => print(value));
-    flickManager = FlickManager(
-      videoPlayerController:
-      VideoPlayerController.file(videoFile),
-      //VideoPlayerController.network("https://github.com/GeekyAnts/flick-video-player-demo-videos/blob/master/demo/default_player.mp4?raw=true"),
+
+    videoPlayerController = VideoPlayerController.file(videoFile);
+
+    chewieController = ChewieController(
+      videoPlayerController: videoPlayerController,
+      aspectRatio: 3 / 2,
+      autoPlay: true,
+      looping: false,
+      autoInitialize: true,
     );
   }
 
   @override
   void dispose() {
-    flickManager.dispose();
+    videoPlayerController.dispose();
+    chewieController.dispose();
     super.dispose();
   }
 
@@ -146,152 +155,11 @@ class SavedVideoPlayerState extends State<SavedVideoPlayer> {
       appBar: AppBar(title: Text(widget.video.name),),
       body: SafeArea(
         child: Center(
-          child: FlickVideoPlayer(
-            flickManager: flickManager,
-            preferredDeviceOrientationFullscreen: [
-              DeviceOrientation.portraitUp,
-              DeviceOrientation.landscapeLeft,
-              DeviceOrientation.landscapeRight,
-            ],
-            flickVideoWithControls: FlickVideoWithControls(
-              controls: CustomOrientationControls(),
-            ),
-            flickVideoWithControlsFullscreen: FlickVideoWithControls(
-              controls: CustomOrientationControls(),
-            ),
-          ),
+          child: Chewie(
+            controller: chewieController,
+          )
         ),
       ),
-    );
-  }
-}
-
-
-
-class CustomOrientationControls extends StatelessWidget {
-  const CustomOrientationControls(
-      {Key key, this.iconSize = 20, this.fontSize = 12})
-      : super(key: key);
-  final double iconSize;
-  final double fontSize;
-
-  @override
-  Widget build(BuildContext context) {
-    FlickVideoManager flickVideoManager =
-    Provider.of<FlickVideoManager>(context);
-
-    return Stack(
-      children: <Widget>[
-        Positioned.fill(
-          child: FlickAutoHideChild(
-            child: Container(color: Colors.black38),
-          ),
-        ),
-        Positioned.fill(
-          child: FlickShowControlsAction(
-            child: FlickSeekVideoAction(
-              child: Center(
-                child: flickVideoManager.nextVideoAutoPlayTimer != null
-                    ? FlickAutoPlayCircularProgress(
-                  colors: FlickAutoPlayTimerProgressColors(
-                    backgroundColor: Colors.white30,
-                    color: Colors.red,
-                  ),
-                )
-                    : FlickAutoHideChild(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-//                      Padding(
-//                        padding: const EdgeInsets.all(8.0),
-//                        child: GestureDetector(
-//                          onTap: () {
-//                            dataManager.skipToPreviousVideo();
-//                          },
-//                          child: Icon(
-//                            Icons.skip_previous,
-//                            color: dataManager.hasPreviousVideo()
-//                                ? Colors.white
-//                                : Colors.white38,
-//                            size: 35,
-//                          ),
-//                        ),
-//                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: FlickPlayToggle(size: 50),
-                      ),
-//                      Padding(
-//                        padding: const EdgeInsets.all(8.0),
-//                        child: GestureDetector(
-//                          onTap: () {
-//                            dataManager.skipToNextVideo();
-//                          },
-//                          child: Icon(
-//                            Icons.skip_next,
-//                            color: dataManager.hasNextVideo()
-//                                ? Colors.white
-//                                : Colors.white38,
-//                            size: 35,
-//                          ),
-//                        ),
-//                      )
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-        Positioned.fill(
-          child: FlickAutoHideChild(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      Row(
-                        children: <Widget>[
-                          FlickCurrentPosition(
-                            fontSize: fontSize,
-                          ),
-                          Text(
-                            ' / ',
-                            style: TextStyle(
-                                color: Colors.white, fontSize: fontSize),
-                          ),
-                          FlickTotalDuration(
-                            fontSize: fontSize,
-                          ),
-                        ],
-                      ),
-                      Expanded(
-                        child: Container(),
-                      ),
-                      FlickFullScreenToggle(
-                        size: iconSize,
-                      ),
-                    ],
-                  ),
-                  FlickVideoProgressBar(
-                    flickProgressBarSettings: FlickProgressBarSettings(
-                      height: 5,
-                      handleRadius: 5,
-                      curveRadius: 50,
-                      backgroundColor: Colors.white24,
-                      bufferedColor: Colors.white38,
-                      playedColor: Colors.red,
-                      handleColor: Colors.red,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

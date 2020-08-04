@@ -170,7 +170,7 @@ class PlaylistItemPage extends StatelessWidget {
               await pr.show();
               var videoId = e['videoId'];
               Directory directory = await getApplicationDocumentsDirectory();
-              String filePath = directory.path + '/'+videoId;
+              String filePath = directory.path + '/'+videoId+".mp4";
               print(videoId);
 
               // TODO: shared preference에 영상정보 업데이트 하기.
@@ -194,6 +194,7 @@ class PlaylistItemPage extends StatelessWidget {
               print(manifest);
               var streamInfo = manifest.muxed.first;
               var stream = yt.videos.streamsClient.get(streamInfo);
+              print(streamInfo.toString());
 
               // Open a file for writing.
               var file = File(filePath);

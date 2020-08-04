@@ -31,6 +31,7 @@ dependencies:
   youtube_explode_dart: ^1.4.2
   video_player: ^0.10.11+2
   flick_video_player: ^0.1.1
+  chewie: ^0.9.10
   flutter_downloader: ^1.4.4
   path_provider: ^1.6.11
   progress_dialog: ^1.2.4
