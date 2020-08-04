@@ -82,6 +82,7 @@ class SavedVideoState extends State<SavedVideoPage> {
                         Navigator.push(context, MaterialPageRoute(
                             builder: (context) => SavedVideoPlayer(elem)));
                       },
+                      trailing: Icon(Icons.navigate_next),
                     ),
                     onDismissed: (DismissDirection direction) async { // 파일 삭제 수행!
                       savedList.remove(elem);

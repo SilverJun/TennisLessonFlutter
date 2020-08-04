@@ -17,13 +17,15 @@ class HomePage extends StatelessWidget {
           children: [
             SizedBox(height: 8),
             Container(
-              height: 414,
               child: Image.asset('assets/home.jpeg',)
             ),
             Padding(
               padding: const EdgeInsets.all(24.0),
-              child: Text('''안녕하십니까? 테니스넷(tennisnet.co.kr)운영자 정진화입니다.
-정진화테니스레슨 동영상을 언제, 어디서, 누구나, 쉽게 접근하여 볼 수 있도록 테니스기술(서브, 포핸드, 백핸드, 포핸드발리, 백핸드발리, 스매쉬, 리턴, 로브, 어프로치샷)을 찾기 쉽게 정리하였습니다. 레슨동영상을 보시고 테니스코트에서 연습하여 테니스를 통해서 건강하고 행복한 삶을 영위하시기를 바랍니다.'''),
+              child: Text('''정진화 테니스레슨 영상을 언제, 어디서, 누구나, 쉽게 접근하여 볼 수 있도록 테니스기술(서브, 포핸드, 백핸드, 포핸드발리, 백핸드발리, 스매쉬, 리턴, 로브, 어프로치샷)을 찾기 쉽게 정리하였습니다. 테니스를 통해서 건강하고 행복한 삶을 영위하시기를 바랍니다.
+
+정진화테니스아카데미
+문의처 : 010-2723-2134
+주소 : 서울시 은평구 응암로 310 파인빌딩 지하 1층'''),
             ),
             ExpansionTile(
               initiallyExpanded: true,
@@ -43,17 +45,24 @@ class HomePage extends StatelessWidget {
               },
             ),
             ListTile(
-              title: Text('정진화 테니스 아카데미 이동'),
+              title: Text('정진화 테니스아카데미 블로그 이동'),
               trailing: Icon(Icons.launch),
               onTap: () {
                 launch('https://blog.naver.com/jtennis2134/'); // https://www.youtube.com/channel/UC_0KlMiTzpejiet6ovAtoOQ
               },
             ),
             ListTile(
-              title: Text('정진화 테니스레슨 유튜브 이동'),
+              title: Text('정진화 테니스레슨 인스타그램 이동'),
               trailing: Icon(Icons.launch),
               onTap: () {
-                launch('https://www.youtube.com/channel/UC_0KlMiTzpejiet6ovAtoOQ');
+                launch('https://www.instagram.com/jeongjinhoa_tennis_academy/');
+              },
+            ),
+            ListTile(
+              title: Text('정진화 테니스아카데미 인스타그램 이동'),
+              trailing: Icon(Icons.launch),
+              onTap: () {
+                launch('https://www.instagram.com/jta_tennis/');
               },
             ),
 
