@@ -19,8 +19,12 @@ bool _processing = false;
 
 class PlaylistItemPage extends StatelessWidget {
   http.Response _response;
-  dynamic _value;
+  dynamic _value = null;
   String playlistID;
+
+  //"title": video.title,
+  //"thumbnails": video.thumbnails.standardResUrl,
+  //"videoId": video.id,
   var playlistitems = [];
   ProgressDialog pr;
 
@@ -31,71 +35,96 @@ class PlaylistItemPage extends StatelessWidget {
     if (!_processing) _processing = true;
     else return false;
 
-    if (playlistitems.isNotEmpty) {
+//    if (playlistitems.isNotEmpty) {
+//      _processing = false;
+//      return true;
+//    }
+//
+//    // check shared preference
+//    print("check shared preference");
+//    SharedPreferences prefs = await SharedPreferences.getInstance();
+//    print("shared preference loading done");
+//
+//    var check = prefs.getBool('isCached_'+playlistID);
+//    print("check cache");
+//    if (check != null && check) { // 캐시가 있는지 확인.
+//      int mills = prefs.getInt('cachedDate_'+playlistID);
+//      var cday = DateTime.fromMillisecondsSinceEpoch(mills).toUtc();
+//      print(cday);
+//      var now = DateTime.now().toUtc();
+//      print(now);
+//      int diffDay = now.difference(cday).inDays;
+//      print("diffDay: " + diffDay.toString());
+//      if (diffDay < 1) { // 캐시가 2일 안에 만들어진 캐시인지 확인.
+//        print("cache loading");
+//        playlistitems = json.decode(prefs.getString('cache_'+playlistID));
+//        _processing = false;
+//        return true;
+//      }
+//    }
+//
+//    print("youtube api loading");
+//
+//    _response = await http.get("https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&q=정진화&playlistId=" + playlistID + "&key=" + API_KEY + "&maxResults=50").catchError((error) { return false; });
+//    _value = json.decode(_response.body);
+//    print(_value);
+//    if (_value['error'] != null) {
+//      _processing = false;
+//      return false;
+//    }
+//    playlistitems.addAll(_value['items']);
+//    var nextPageToken = _value['nextPageToken'];
+//    print(nextPageToken);
+//
+//    while (nextPageToken != null) {
+//      _response = await http.get("https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&q=정진화&playlistId=" + playlistID + "&key=" + API_KEY + "&maxResults=50&pageToken=" + nextPageToken).catchError((error) { return false; });
+//      _value = json.decode(_response.body);
+//      if (_value['error'] != null) {
+//        _processing = false;
+//        return false;
+//      }
+//
+//      playlistitems.addAll(_value['items']);
+//      //print(playlistitems.length);
+//      print(_value);
+//      nextPageToken = _value['nextPageToken'];
+//      print(nextPageToken);
+//    }
+//
+//    // save cache data
+//    print("save cache");
+//    await prefs.setBool('isCached_'+playlistID, true);
+//    await prefs.setInt('cachedDate_'+playlistID, DateTime.now().millisecondsSinceEpoch);
+//    await prefs.setString('cache_'+playlistID, json.encode(playlistitems));
+//
+//    _processing = false;
+//
+//    print("done making playlistitems");
+
+    var yt = YE.YoutubeExplode();
+
+// Get playlist metadata.
+    var playlist = await yt.playlists.get(playlistID).catchError((error) {
       _processing = false;
-      return true;
-    }
-
-    // check shared preference
-    print("check shared preference");
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    print("shared preference loading done");
-
-    var check = prefs.getBool('isCached_'+playlistID);
-    print("check cache");
-    if (check != null && check) { // 캐시가 있는지 확인.
-      int mills = prefs.getInt('cachedDate_'+playlistID);
-      var cday = DateTime.fromMillisecondsSinceEpoch(mills).toUtc();
-      print(cday);
-      var now = DateTime.now().toUtc();
-      print(now);
-      int diffDay = now.difference(cday).inDays;
-      print("diffDay: " + diffDay.toString());
-      if (diffDay < 1) { // 캐시가 2일 안에 만들어진 캐시인지 확인.
-        print("cache loading");
-        playlistitems = json.decode(prefs.getString('cache_'+playlistID));
-        _processing = false;
-        return true;
-      }
-    }
-
-    print("youtube api loading");
-
-    _response = await http.get("https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&q=정진화&playlistId=" + playlistID + "&key=" + API_KEY + "&maxResults=50").catchError((error) { return false; });
-    _value = json.decode(_response.body);
-    print(_value);
-    if (_value['error'] != null) {
-      _processing = false;
+      _value = error;
+      print("return false");
       return false;
+    });
+
+    playlistitems = [];
+    print("YoutubeExplode start");
+    await for (var video in yt.playlists.getVideos(playlist.id)) {
+      playlistitems.add({
+        "title": video.title,
+        "thumbnails": video.thumbnails.lowResUrl,
+        "videoId": video.id.toString(),
+      });
     }
-    playlistitems.addAll(_value['items']);
-    var nextPageToken = _value['nextPageToken'];
-    print(nextPageToken);
+    print("YoutubeExplode end");
 
-    while (nextPageToken != null) {
-      _response = await http.get("https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&q=정진화&playlistId=" + playlistID + "&key=" + API_KEY + "&maxResults=50&pageToken=" + nextPageToken).catchError((error) { return false; });
-      _value = json.decode(_response.body);
-      if (_value['error'] != null) {
-        _processing = false;
-        return false;
-      }
-
-      playlistitems.addAll(_value['items']);
-      //print(playlistitems.length);
-      print(_value);
-      nextPageToken = _value['nextPageToken'];
-      print(nextPageToken);
-    }
-
-    // save cache data
-    print("save cache");
-    await prefs.setBool('isCached_'+playlistID, true);
-    await prefs.setInt('cachedDate_'+playlistID, DateTime.now().millisecondsSinceEpoch);
-    await prefs.setString('cache_'+playlistID, json.encode(playlistitems));
-
+    yt.close();
     _processing = false;
 
-    print("done making playlistitems");
     return true;
   }
 
@@ -111,7 +140,7 @@ class PlaylistItemPage extends StatelessWidget {
               width: 120,
               height: 90,
               child: Image.network(
-                e['snippet']['thumbnails']['default']['url'],
+                e['thumbnails'],
                 loadingBuilder: (context, child, loadingProgress) {
                   if (loadingProgress == null) return child;
                   return CircularProgressIndicator();
@@ -119,11 +148,11 @@ class PlaylistItemPage extends StatelessWidget {
                 fit: BoxFit.fitWidth,
               ),
             ),
-            title: Text(e['snippet']['title']),
+            title: Text(e['title']),
             onTap: () {
               FlutterYoutube.playYoutubeVideoByUrl(
                   apiKey: API_KEY,
-                  videoUrl: "https://www.youtube.com/watch?v=" + e['snippet']['resourceId']['videoId'],
+                  videoUrl: "https://www.youtube.com/watch?v=" + e['videoId'],
                   autoPlay: true, //default falase
                   fullScreen: true //default false
               );
@@ -138,9 +167,9 @@ class PlaylistItemPage extends StatelessWidget {
             foregroundColor: Colors.white,
             onTap: () async {
               await pr.show();
-              var videoId = e['snippet']['resourceId']['videoId'];
+              var videoId = e['videoId'];
               Directory directory = await getApplicationDocumentsDirectory();
-              String filePath = directory.path + '/'+e['id'];
+              String filePath = directory.path + '/'+videoId;
               print(videoId);
               var yt = YE.YoutubeExplode();
 
@@ -164,7 +193,7 @@ class PlaylistItemPage extends StatelessWidget {
 
               // Add in shared_preference
               savedList.add(SavedVideo({
-                "name" : e['snippet']['title'],
+                "name" : e['title'],
                 "fileName" : file.path,
               }));
 
@@ -190,13 +219,19 @@ class PlaylistItemPage extends StatelessWidget {
         child: FutureBuilder(
           future: getPlayListItems(),
           builder: (context, snapshot) {
-            print(_value);
-            if (!snapshot.hasData) return Center(child: CircularProgressIndicator(),);
-            if (playlistitems.isNotEmpty || snapshot.data)
+            print(snapshot.data);
+            if (!snapshot.hasData && _value == null) return Center(child: CircularProgressIndicator(),);
+            if (playlistitems.isNotEmpty)
               return Builder(builder: (context) => ListView(children: _buildListTiles(playlistitems, context)));
             else return Center(child: Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Text(_value['error']['message']),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("재생목록을 불러오는 중 오류가 발생했습니다."),
+                  SizedBox(height: 8.0,),
+                  Text(_value.toString(), style: TextStyle(color: Colors.grey, fontSize: 10.0),),
+                ]),
             ),);
           }
         ),
