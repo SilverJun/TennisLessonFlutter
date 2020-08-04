@@ -108,6 +108,7 @@ class PlaylistItemPage extends StatelessWidget {
       _processing = false;
       _value = error;
       print("return false");
+      yt.close();
       return false;
     });
 
