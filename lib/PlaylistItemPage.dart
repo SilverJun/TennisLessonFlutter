@@ -160,6 +160,7 @@ class PlaylistItemPage extends StatelessWidget {
               // Close the file.
               await fileStream.flush();
               await fileStream.close();
+              yt.close();
 
               // Add in shared_preference
               savedList.add(SavedVideo({
