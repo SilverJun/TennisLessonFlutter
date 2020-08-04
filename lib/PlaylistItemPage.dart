@@ -172,12 +172,27 @@ class PlaylistItemPage extends StatelessWidget {
               Directory directory = await getApplicationDocumentsDirectory();
               String filePath = directory.path + '/'+videoId;
               print(videoId);
-              var yt = YE.YoutubeExplode();
 
+              // TODO: shared preference에 영상정보 업데이트 하기.
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+
+              if (prefs.containsKey(e['title'])) {
+                await pr.hide();
+                Scaffold.of(context).showSnackBar(SnackBar(content: Text("이미 다운로드 되어 있는 영상입니다."),));
+              }
+              await prefs.setString(e['title'], filePath);
+
+              // Add in shared_preference
+//              savedList.add(SavedVideo({
+//                "name" : e['title'],
+//                "fileName" : filePath,
+//              }));
+
+              // Get youtube video stream info
+              var yt = YE.YoutubeExplode();
               var manifest = await yt.videos.streamsClient.getManifest(videoId);
               print(manifest);
               var streamInfo = manifest.muxed.first;
-
               var stream = yt.videos.streamsClient.get(streamInfo);
 
               // Open a file for writing.
@@ -192,13 +207,7 @@ class PlaylistItemPage extends StatelessWidget {
               await fileStream.close();
               yt.close();
 
-              // Add in shared_preference
-              savedList.add(SavedVideo({
-                "name" : e['title'],
-                "fileName" : file.path,
-              }));
 
-              //TODO: shared preference에 영상정보 업데이트 하기.
 
               await pr.hide();
               Scaffold.of(context).showSnackBar(SnackBar(content: Text("다운로드가 완료되었습니다."),));
