@@ -13,6 +13,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'TennisLesson',
       home: HomePage(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
