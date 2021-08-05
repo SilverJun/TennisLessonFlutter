@@ -1,15 +1,13 @@
-import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tennislesson/SavedVideoPage.dart';
-import 'package:tennislesson/youtube.dart';
-import 'package:flutter_youtube/flutter_youtube.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart' as YE;
+
+import 'YoutubePage.dart';
 
 bool _processing = false;
 
@@ -17,7 +15,6 @@ bool _processing = false;
 // TODO : explode 로 로직 다 바꾸기! API 쓰지말자.
 
 class PlaylistItemPage extends StatelessWidget {
-  http.Response _response;
   dynamic _value = null;
   String playlistID;
 
@@ -150,12 +147,15 @@ class PlaylistItemPage extends StatelessWidget {
             ),
             title: Text(e['title']),
             onTap: () {
-              FlutterYoutube.playYoutubeVideoByUrl(
-                  apiKey: API_KEY,
-                  videoUrl: "https://www.youtube.com/watch?v=" + e['videoId'],
-                  autoPlay: true, //default falase
-                  fullScreen: true //default false
-              );
+              Navigator.push(context, MaterialPageRoute(builder: (context) => YoutubePage(videoId: e['videoId'],)));
+
+              // print(e['videoId']);
+              // FlutterYoutube.playYoutubeVideoByUrl(
+              //     apiKey: API_KEY,
+              //     videoUrl: "https://www.youtube.com/watch?v=" + e['videoId'],
+              //     autoPlay: true, //default falase
+              //     fullScreen: true //default false
+              // );
             },
           ),
         ),
