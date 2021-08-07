@@ -48,6 +48,7 @@ class YoutubePage extends StatelessWidget {
           // _controller.dispose();
           SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
           Navigator.pop(context);
+          SystemChrome.setPreferredOrientations(DeviceOrientation.values);
         }, icon: Icon(Icons.close), color: Colors.white,)],
       ),
       builder: (context, player) {
